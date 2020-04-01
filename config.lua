@@ -1,12 +1,5 @@
 Config = {}
 
--- Are you using ESX? Turn this to true if you would like fuel & jerry cans to cost something.
-Config.UseESX = false
-
--- What should the price of jerry cans be?
-Config.JerryCanCost = 100
-Config.RefillCost = 50 -- If it is missing half of it capacity, this amount will be divided in half, and so on.
-
 -- Fuel decor - No need to change this, just leave it.
 Config.FuelDecor = "_FUEL_LEVEL"
 
@@ -20,29 +13,22 @@ Config.EnableHUD = true
 Config.ShowNearestGasStationOnly = false
 Config.ShowAllGasStations = true
 
--- Modify the fuel-cost here, using a multiplier value. Setting the value to 2.0 would cause a doubled increase.
-Config.CostMultiplier = 1.0
-
 -- Configure the strings as you wish here.
 Config.Strings = {
 	ExitVehicle = "~y~Exit the vehicle to refuel",
 	EToRefuel = "[~p~!~w~] Press ~g~E ~w~to refuel vehicle",
 	JerryCanEmpty = "Jerry can is empty",
 	FullTank = "~r~Tank is full",
-	PurchaseJerryCan = "[~p~!~w~] Press ~g~E ~w~to purchase a jerry can for ~g~$" .. Config.JerryCanCost,
 	CancelFuelingPump = "[~r~!~w~] Press ~g~E ~w~to cancel the fueling",
 	CancelFuelingJerryCan = "[~r~!~w~] Press ~g~E ~w~to cancel the fueling",
 	NotEnoughCash = "Not enough cash",
 	RefillJerryCan = "[~p~!~w~] Press ~g~E ~w~ to refill the jerry can for ",
 	NotEnoughCashJerryCan = "Not enough cash to refill jerry can",
 	JerryCanFull = "Jerry can is full",
-	TotalCost = "Cost",
 }
 
-if not Config.UseESX then
-	Config.Strings.PurchaseJerryCan = "[~p~!~w~] Press ~g~E ~w~to grab a jerry can"
-	Config.Strings.RefillJerryCan = "[~p~!~w~] Press ~g~E ~w~ to refill the jerry can"
-end
+Config.Strings.GrabJerryCan = "[~p~!~w~] Press ~g~E ~w~to grab a jerry can"
+Config.Strings.RefillJerryCan = "[~p~!~w~] Press ~g~E ~w~ to refill the jerry can"
 
 Config.PumpModels = {
 	[-2007231801] = true,
