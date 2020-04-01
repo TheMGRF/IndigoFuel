@@ -76,20 +76,16 @@ end)
 
 Citizen.CreateThread(function()
 	while true do
-		Citizen.Wait(250)
+		Citizen.Wait(10)
 
 		local pumpObject, pumpDistance = FindNearestFuelPump()
 
-		if pumpDistance < 2.5 then
+		if pumpDistance < 6 then
 			isNearPump = pumpObject
-
-			if Config.UseESX then
-				currentCash = ESX.GetPlayerData().money
-			end
 		else
 			isNearPump = false
 
-			Citizen.Wait(math.ceil(pumpDistance * 20))
+			Citizen.Wait(10)
 		end
 	end
 end)
@@ -238,8 +234,6 @@ Citizen.CreateThread(function()
 								GiveWeaponToPed(ped, 883325847, 4500, false, true)
 
 								TriggerServerEvent('fuel:pay', Config.JerryCanCost)
-
-								currentCash = ESX.GetPlayerData().money
 							end
 						else
 							if Config.UseESX then
@@ -289,7 +283,7 @@ if Config.ShowNearestGasStationOnly then
 
 		while true do
 			local coords = GetEntityCoords(PlayerPedId())
-			local closest = 1000
+			local closest = 4000
 			local closestCoords
 
 			for _, gasStationCoords in pairs(Config.GasStations) do
@@ -336,6 +330,10 @@ if Config.EnableHUD then
 
 	local mph = 0
 	local kmh = 0
+	local rpm = 0
+	local gear = 0
+	local maxGear = 0
+	local nextGear = 0;
 	local fuel = 0
 	local displayHud = false
 
@@ -352,6 +350,10 @@ if Config.EnableHUD then
 
 				mph = tostring(math.ceil(speed * 2.236936))
 				kmh = tostring(math.ceil(speed * 3.6))
+				rpm = tostring(math.ceil((GetVehicleCurrentRpm(vehicle) * 10) - 2))
+				gear = tostring(math.ceil(GetVehicleCurrentGear(vehicle)))
+				maxGear = GetVehicleHighGear(vehicle)
+				nextGear = (GetVehicleNextGear(vehicle) + 1)
 				fuel = tostring(math.ceil(GetVehicleFuelLevel(vehicle)))
 
 				displayHud = true
@@ -364,14 +366,69 @@ if Config.EnableHUD then
 			Citizen.Wait(50)
 		end
 	end)
-
+	
 	Citizen.CreateThread(function()
 		while true do
 			if displayHud then
-				DrawAdvancedText(0.130 - x, 0.77 - y, 0.005, 0.0028, 0.6, mph, 255, 255, 255, 255, 6, 1)
-				DrawAdvancedText(0.174 - x, 0.77 - y, 0.005, 0.0028, 0.6, kmh, 255, 255, 255, 255, 6, 1)
-				DrawAdvancedText(0.2195 - x, 0.77 - y, 0.005, 0.0028, 0.6, fuel, 255, 255, 255, 255, 6, 1)
-				DrawAdvancedText(0.148 - x, 0.7765 - y, 0.005, 0.0028, 0.4, "mp/h              km/h              Fuel", 255, 255, 255, 255, 6, 1)
+				--DrawAdvancedText(0.130 - x, 0.77 - y, 0.005, 0.0028, 0.6, mph, 255, 255, 255, 255, 6, 1)
+				--[[if tonumber(rpm) == 8 then				
+					if tonumber(gear) == tonumber(maxGear) then
+						DrawAdvancedText(0.255, 0.896, 0.005, 0.0028, 0.45, "~p~Speed: ~w~" .. mph .. " MPH ~g~| ~p~RPM: ~r~" .. rpm .. " ~g~| ~p~Gear: ~r~" .. gear, 255, 255, 255, 255, 6, 1)
+					else
+						DrawAdvancedText(0.255, 0.896, 0.005, 0.0028, 0.45, "~p~Speed: ~w~" .. mph .. " MPH ~g~| ~p~RPM: ~r~" .. rpm .. " ~g~| ~p~Gear: ~w~" .. gear, 255, 255, 255, 255, 6, 1)
+					end
+				elseif tonumber(gear) == tonumber(maxGear) then
+					if rpm == 8 then
+						DrawAdvancedText(0.255, 0.896, 0.005, 0.0028, 0.45, "~p~Speed: ~w~" .. mph .. " MPH ~g~| ~p~RPM: ~r~" .. rpm .. " ~g~| ~p~Gear: ~w~" .. gear, 255, 255, 255, 255, 6, 1)
+					else
+						DrawAdvancedText(0.255, 0.896, 0.005, 0.0028, 0.45, "~p~Speed: ~w~" .. mph .. " MPH ~g~| ~p~RPM: ~w~" .. rpm .. " ~g~| ~p~Gear: ~r~" .. gear, 255, 255, 255, 255, 6, 1)
+					end
+				else
+					DrawAdvancedText(0.255, 0.896, 0.005, 0.0028, 0.45, "~p~Speed: ~w~" .. mph .. " MPH ~g~| ~p~RPM: ~w~" .. rpm .. " ~g~| ~p~Gear: ~w~" .. gear, 255, 255, 255, 255, 6, 1)
+				end
+				]]--
+				--DrawAdvancedText(0.2195 - x, 0.77 - y, 0.005, 0.0028, 0.6, fuel, 255, 255, 255, 255, 6, 1)
+				--DrawAdvancedText(0.148 - x, 0.7765 - y, 0.005, 0.0028, 0.4, "                                           Fuel", 255, 255, 255, 255, 6, 1)
+
+				-- full size bar
+					--DrawRect(0.0855, 0.798, 0.141, 0.016, 77, 77, 77, 128) -- background
+					--DrawRect(0.0855, 0.7977, 0.141, 0.010, 255, 179, 0, 128) -- yellow
+				
+				-- hard coded 51%
+					--DrawRect(0.0855, 0.798, 0.141, 0.016, 77, 77, 77, 128) -- background
+					--DrawRect(0.0419117647, 0.7977, 0.051, 0.010, 255, 179, 0, 128) -- yellow
+				DrawRect(0.0855, 0.798, 0.141, 0.016, 26, 26, 26, 128) -- background
+				
+				local ped = PlayerPedId()
+				local vehicle = GetVehiclePedIsIn(ped, false)
+				
+				-- fuel debug
+				--DrawAdvancedText(0.255, 0.896, 0.005, 0.0028, 0.45, "~p~Fuel: ~w~" .. fuel , 255, 255, 255, 255, 6, 1)
+				
+				local fuelTankCapacity = 100
+				local fuelWidth = ((fuelTankCapacity / 100000) * fuel)
+				--fuelWidth = fuelWidth + 0.038
+				fuelWidth = fuelWidth * 1.4
+				
+				if fuelWidth > 0.141 then
+					fuelWidth = 0.141
+				end
+				
+				local half = fuelWidth / 2
+				
+				DrawRect(0.0855, 0.798, 0.139, 0.010, 255, 179, 0, 50) -- yellow
+				
+				if tonumber(fuel) < 9 then
+					if tonumber(fuel) < 5 then
+						fuelWidth = fuelWidth - 0.025
+						half = fuelWidth / 2
+						DrawRect(0.016 + half, 0.7977, fuelWidth, 0.010, 255, 255, 255, 200) -- white
+					else
+						DrawRect(0.016 + half, 0.7977, fuelWidth, 0.010, 255, 255, 255, 200) -- white
+					end
+				else
+					DrawRect(0.016 + half, 0.7977, fuelWidth, 0.010, 255, 179, 0, 156) -- yellow
+				end
 			else
 				Citizen.Wait(750)
 			end
